@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "FicTrans · 同人韩英译中",
+  "version": "1.1.1",
+  "description": "在同人阅读页就地把韩文/英文译成简体中文，保留原文。使用你自己的 DeepSeek API，Key 只存在本机。",
+  "permissions": ["storage", "unlimitedStorage"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/shared.js", "src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "FicTrans 同人翻译"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

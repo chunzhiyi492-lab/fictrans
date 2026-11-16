@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>FicTrans 设置</title>
+<style>
+  body { font: 14px/1.7 system-ui, "Microsoft YaHei", sans-serif; background: #14161a; color: #e6e9ee; margin: 0; padding: 24px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 26px 0 10px; padding-left: 10px; border-left: 3px solid #2f7a86; }
+  .card { background: #1c2026; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+  label { display: block; margin: 8px 0 3px; color: #aab3bd; font-size: 12.5px; }
+  input[type=text], input[type=password], input[type=number], select, textarea {
+    width: 100%; box-sizing: border-box; padding: 7px 9px; border-radius: 6px; border: 1px solid #333a44;
+    background: #121418; color: #e6e9ee; font: inherit;
+  }
+  textarea { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; min-height: 90px; }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  button { background: #2f7a86; color: #fff; border: 0; border-radius: 7px; padding: 8px 14px; cursor: pointer; font-size: 13px; }
+  button.secondary { background: #2b3038; }
+  button.danger { background: #6e3a3a; }
+  .hint { color: #8b95a1; font-size: 12px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { border-bottom: 1px solid #2a2f37; padding: 5px 6px; font-size: 12.5px; vertical-align: top; }
+  th { color: #9aa3ad; text-align: left; font-weight: normal; }
+  td input { padding: 4px 6px; }
+  .ok { color: #7fd49a; } .err { color: #e08a8a; }
+  .notice { background: #241f18; border: 1px solid #4a3d22; border-radius: 8px; padding: 10px 12px; font-size: 12.5px; color: #d8c9a3; }
+  .key-status { font-family: ui-monospace, monospace; font-size: 12px; color: #8b95a1; }
+  .pill { display:inline-block; padding:1px 8px; border-radius: 99px; background:#233038; color:#9fe3ec; font-size:11px; margin-left:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FicTrans 设置</h1>
+  <div class="hint">同人阅读页的韩文 / 英文 → 简体中文翻译。所有数据只保存在本机浏览器中。</div>
+
+  <h2>① 接口与模型</h2>
+  <div class="card">
+    <label>API Base URL（OpenAI 兼容接口）</label>
+    <input type="text" id="baseUrl" placeholder="https://api.deepseek.com">
+    <label>模型</label>
+    <input type="text" id="model" list="modelList" placeholder="deepseek-flash">
+    <datalist id="modelList">
+      <option value="deepseek-flash">
+      <option value="deepseek-v4-pro">
+    </datalist>
+    <label>DeepSeek API Key（只保存在本机 chrome.storage.local，绝不出现在源码/日志/报错中）</label>
+    <div class="row">
+      <div style="flex:3"><input type="password" id="apiKey" placeholder="sk-..."></div>
+      <div style="flex:0"><button class="secondary" id="btnShow" type="button">显示</button></div>
+      <div style="flex:0"><button id="btnSaveKey" type="button">保存 Key</button></div>
+    </div>
+    <div class="key-status" id="keyStatus">未设置</div>
+    <div style="margin-top:10px">
+      <button id="btnTest" type="button">测试连接</button>
+      <button class="danger" id="btnDeleteKey" type="button">删除 Key</button>
+      <span id="testResult"></span>
+    </div>
+  </div>
+
+  <h2>② 费用与首次确认</h2>
+  <div class="card">
+    <div class="notice">
+      开始翻译前，请确认：每次翻译会把<strong>当前页可见的正文段落</strong>（仅韩文/英文段落，不含网址、代码、用户名、输入框、隐藏内容、评论私信）发送到你上面填写的接口，按 token 计费。
+      系统提示词中只附带<strong>与当前段落相关的术语条目（≤60 条）和 ≤3 条相关例句</strong>，不会上传整份词库。
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div><label>输入单价（缓存未命中，元 / 百万 token）</label><input type="number" step="0.01" id="priceInMiss" value="1"></div>
+      <div><label>输入单价（缓存命中，元 / 百万 token）</label><input type="number" step="0.01" id="priceInHit" value="0.02"></div>
+      <div><label>输出单价（元 / 百万 token）</label><input type="number" step="0.01" id="priceOut" value="4"></div>
+    </div>
+    <div class="hint">deepseek-flash 默认价（谷时）：输入未命中 ¥1 / 命中 ¥0.02 / 输出 ¥4；高峰（北京时间工作日 9–12、14–18）约为两倍。v4-pro 价格见 DeepSeek 官网，可在此修改。</div>
+    <label style="margin-top:10px"><input type="checkbox" id="ackConfirm"> 我已知晓发送内容范围、计费方式，并确认当前模型与费用设置</label>
+    <div style="margin-top:8px">
+      <button id="btnConfirm" type="button">确认并保存</button>
+      <span class="pill" id="ackStatus">未确认</span>
+    </div>
+    <div class="hint" id="usageLine">累计用量：—</div>
+    <button class="secondary" id="btnResetUsage" type="button" style="margin-top:6px">清零用量统计</button>
+  </div>
+
+  <h2>③ 个人术语表（优先于模型临时判断）</h2>
+  <div class="card">
+    <div class="hint">作品名、角色名、CP 名、称呼、饭圈缩写等固定译法。仅当原文出现该词时才会随请求发送。</div>
+    <table id="glossTable">
+      <thead><tr><th style="width:32%">原文 / 原词</th><th style="width:38%">固定译法</th><th style="width:22%">备注（可选）</th><th style="width:8%"></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="btnAddGloss" type="button" class="secondary" style="margin-top:8px">+ 添加一行</button>
+    <label style="margin-top:12px">批量粘贴（每行一条，格式：原词=译法 或 原词⇥译法⇥备注）</label>
+    <textarea id="glossBulk" placeholder="예: 떡밥=伏笔/梗&#10;건앗=fromis_9 粉圈昵称"></textarea>
+    <button id="btnBulkGloss" type="button" class="secondary" style="margin-top:6px">导入批量条目</button>
+    <span style="margin-left:8px"><button id="btnExportGloss" type="button" class="secondary">导出 JSON</button></span>
+    <span style="margin-left:6px"><button id="btnImportGloss" type="button" class="secondary">导入 JSON</button></span>
+    <input type="file" id="glossFile" accept="application/json" hidden>
+  </div>
+
+  <h2>④ 个人例句库（仅挑相关几句随请求发送）</h2>
+  <div class="card">
+    <div class="hint">你手写的「韩文原句 → 中文译法」。发送时按与当前段落的词汇重叠挑选 ≤3 条（置顶的优先）。</div>
+    <table id="exTable">
+      <thead><tr><th style="width:40%">韩文 / 英文原句</th><th style="width:42%">中文译法</th><th style="width:8%">置顶</th><th style="width:10%"></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="btnAddEx" type="button" class="secondary" style="margin-top:8px">+ 添加一行</button>
+  </div>
+
+  <h2>⑤ 数据与隐私</h2>
+  <div class="card">
+    <div class="hint">
+      · Key 与设置保存在本机 chrome.storage.local；译文缓存在本机 IndexedDB；扩展不向任何第三方服务器发送数据，不含统计/上报。<br>
+      · 翻译请求只发送「需要翻译的可见正文段落 + 命中的术语 + 相关例句」，不发送整页、隐藏内容、表单、私信、Cookie 或个人信息。<br>
+      · 修改术语表 / 例句库后旧缓存自动失效（按内容哈希匹配）。
+    </div>
+    <div style="margin-top:10px">
+      缓存条目数：<span id="cacheCount">…</span>
+      <button class="secondary" id="btnClearCache" type="button" style="margin-left:10px">清除翻译缓存</button>
+    </div>
+    <div style="margin-top:10px">
+      <button class="danger" id="btnWipe" type="button">清除全部数据（Key / 术语表 / 例句 / 缓存 / 用量）</button>
+    </div>
+  </div>
+</div>
+<script src="../src/shared.js"></script>
+<script src="options.js"></script>
+</body>
+</html>

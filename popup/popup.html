@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  body { width: 260px; margin: 0; padding: 14px; font: 13px/1.55 system-ui, "Microsoft YaHei", sans-serif; background: #17191d; color: #e8ebf0; }
+  h1 { font-size: 14px; margin: 0 0 2px; }
+  .sub { color: #9aa3ad; font-size: 11px; margin-bottom: 10px; }
+  button { width: 100%; margin: 4px 0; padding: 8px; border: 0; border-radius: 8px; background: #2f7a86; color: #fff; cursor: pointer; font-size: 13px; }
+  button.secondary { background: #2b3038; }
+  button.danger { background: #6e3a3a; }
+  .status { margin: 8px 0; padding: 8px; border-radius: 8px; background: #20242a; font-size: 12px; color: #c3cad2; }
+  .hidden { display: none; }
+  a { color: #7fd4de; }
+  .row { display: flex; gap: 6px; }
+  .row button { margin: 4px 0; }
+</style>
+</head>
+<body>
+  <h1>FicTrans 同人翻译</h1>
+  <div class="sub">韩文 / 英文 → 简体中文 · 使用你自己的 DeepSeek Key</div>
+
+  <div id="notReady" class="status hidden">尚未完成配置：请先设置 API Key 并确认费用。</div>
+
+  <button id="btnStart">翻译本页</button>
+  <div class="row">
+    <button id="btnStop" class="secondary">停止</button>
+    <button id="btnToggle" class="secondary">切换显示：双语</button>
+  </div>
+  <button id="btnExport" class="secondary">导出本页译文（.txt）</button>
+  <div class="status" id="stateLine">状态：空闲</div>
+  <button id="btnOptions" class="secondary">打开设置（Key / 术语表 / 例句）</button>
+
+  <script src="../src/shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

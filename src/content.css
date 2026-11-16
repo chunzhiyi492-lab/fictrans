@@ -1,0 +1,61 @@
+/* FicTrans 译文样式：追加在原文下方，不改动原文 */
+.fcot-tr {
+  margin: 0.55em 0 1em;
+  padding: 0.55em 0.85em;
+  border-left: 3px solid rgba(93, 188, 196, 0.55);
+  background: rgba(135, 150, 160, 0.10);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.96em;
+  line-height: 1.8;
+  color: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+html.fcot-mode-ko .fcot-tr { display: none !important; }
+html.fcot-mode-zh .fcot-orig { display: none !important; }
+html.fcot-mode-zh .fcot-tr { margin-bottom: 1em; }
+
+.fcot-tr.fcot-err {
+  border-left-color: rgba(216, 116, 116, 0.6);
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+.fcot-tr.fcot-err button {
+  margin-left: 0.6em;
+  font-size: 0.95em;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: inherit;
+  border-radius: 4px;
+  padding: 1px 8px;
+}
+
+/* 页面右下角状态小条 */
+.fcot-widget {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2147483647;
+  background: rgba(18, 20, 24, 0.93);
+  color: #e8ebf0;
+  font: 12px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  max-width: 78vw;
+}
+.fcot-widget .fcot-prog { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fcot-widget button {
+  background: #2f7a86;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.fcot-widget button.fcot-stop { background: #7a3a3a; }
